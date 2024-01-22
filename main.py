@@ -38,7 +38,7 @@ pygame.display.set_caption("Rogue Bomber")
 black = (0, 0, 0)
 grey = (169, 169, 169)
 
-font = pygame.font.SysFont("monospace", 36)
+font = pygame.font.SysFont("monospace", 36) # use monospace font always, otherwise the text alignment will be off
 
 lines = Map.split('\n')
 
