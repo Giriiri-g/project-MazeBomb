@@ -24,7 +24,7 @@ Map = """       ╔══════════╗
        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙∙∙∙║       
        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙║       
        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
-       ╚════════════╝     ╚═══╝                          ╚════╝        
+       ╚════════════╝     ╚═══╝                          ╚════╝       
 """
 Map2 = """
 ══════════════════............................
@@ -41,34 +41,47 @@ Map2 = """
 
 
 def move(d):
-     return
+     global Player_pos
      if d=="a":
+          calcpos = [Player_pos[0], Player_pos[1]-1]
+          calcmappos = mapindexer(calcpos)
+          if checkvalid(calcmappos):
+               Player_pos = calcpos
+               drawplayer(calcmappos)
+               
+     elif d=="s":
+          calcpos = [Player_pos[0]+1, Player_pos[1]]
+          calcmappos = mapindexer(calcpos)
+          if checkvalid(calcmappos):
+               Player_pos = calcpos
+               drawplayer(calcmappos)
+     elif d=="w":
           calcpos = [Player_pos[0]-1, Player_pos[1]]
           calcmappos = mapindexer(calcpos)
           if checkvalid(calcmappos):
                Player_pos = calcpos
-               
-     elif d=="s":
-          checkvalid(calcmappos)
-          pass
-     elif d=="w":
-          checkvalid(calcmappos)
-          pass
+               drawplayer(calcmappos)
      elif d=="d":
-          checkvalid(calcmappos)
-          pass
+          calcpos = [Player_pos[0], Player_pos[1]+1]
+          calcmappos = mapindexer(calcpos)
+          print(calcpos, calcmappos)
+          if checkvalid(calcmappos):
+               Player_pos = calcpos
+               print("move valid")
+               drawplayer(calcmappos)
 
 def checkvalid(mappos):
-     if Map[mappos] == "═":
+     if Map[mappos] in ['║','═','╗','╝','╚','╔', " "]:
           return False
      return True
 
 def mapindexer(pos):
-     return pos[0]*70 + pos[1] + 1
+     return pos[0]*71 + pos[1] + 1
 
 def drawplayer(mappos):
-     mapstr = Map[:mappos]+"@"+Map[mappos+1:]
-     return mapstr
+     global playermap
+     playermap = Map[:mappos]+"@"+Map[mappos+1:]
+
 
 pygame.init()
 
@@ -77,11 +90,12 @@ pygame.display.set_caption("Rogue Bomber")
 
 black = (0, 0, 0)
 blue = (0, 255, 0)
-Player_pos = [1, 9]
-Map_pos = 80
-# curr Map pos = pos[0]*70 + pos[1] + 1, pos -> player pos
+Player_pos = [10, 9]
+Map_pos = 720
+# curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
 font = pygame.font.SysFont("monospace", 36) # use monospace font always, otherwise the text alignment will be off
-playermap = drawplayer(Map_pos)
+playermap = ""
+drawplayer(Map_pos)
 lines = playermap.split('\n')
 
 
@@ -96,15 +110,23 @@ while True:
           if event.type == pygame.KEYDOWN:
                if event.key == pygame.K_a:
                     move("a")
+                    lines = playermap.split('\n')
+                    print(playermap)
                     print("A")
                if event.key == pygame.K_s:
-                    move("a")
+                    move("s")
+                    lines = playermap.split('\n')
+                    print(playermap)
                     print("S")
                if event.key == pygame.K_w:
-                    move("a")
+                    move("w")
+                    lines = playermap.split('\n')
+                    print(playermap)
                     print("W")
                if event.key == pygame.K_d:
-                    move("a")
+                    move("d")
+                    lines = playermap.split('\n')
+                    print(playermap)
                     print("D")
 
      screen.fill(black)
