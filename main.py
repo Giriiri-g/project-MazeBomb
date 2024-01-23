@@ -102,14 +102,20 @@ menu_active = False
 
 # menu surface
 
-desc = """Welcome to the Game!
-▒ : passage
+desc = """Welcome to Rogue Bomber!
+A    : Move West
+S    : Move South
+W    : Move North
+D    : Move East
+Q    : Quit
+/    : Display Help
+ESC  : Exit Help Menu
+!    : Bomb
+▒    : Passage
+║    : A vertical wall
+═    : A horizontal wall
+╠    : Doorway"""
 
-║ : a vertical wall
-
-═ : a horizontal wall
-
-╠ : door"""
 menu_lines = desc.split('\n')
 menu_height = len(menu_lines) * font.get_height()
 menu = pygame.Surface((font.size(max(menu_lines, key=len))[0], menu_height), pygame.SRCALPHA)
@@ -122,7 +128,6 @@ for i, line in enumerate(menu_lines):
 menu_x = (screen.get_width() - menu.get_width()) // 2
 menu_y = (screen.get_height() - menu.get_height()) // 2
 
-
 clock = pygame.time.Clock()
 
 while True:
@@ -132,6 +137,10 @@ while True:
                sys.exit()
 
           if event.type == pygame.KEYDOWN:
+               if event.key == pygame.K_q:
+                    print("Shutting Down")
+                    pygame.quit()
+                    sys.exit()
                if event.key == pygame.K_a and menu_active == False:
                     move("a")
                     lines = playermap.split('\n')
