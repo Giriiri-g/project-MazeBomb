@@ -1,7 +1,7 @@
 from socket import *
 
-serverIP = "192.168.161.221"
-serverPort = 15632
+serverIP = "172.20.10.3"
+serverPort = 18547
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((serverIP, serverPort))
@@ -14,8 +14,10 @@ while True:
     if message.lower() == "exit":
         break  # Break the loop if the user types "exit"
 
-    reply = clientSocket.recv(1024).decode()
-    print(f"Received from server: {reply}")
+    reply = clientSocket.recv(20000).decode()
+    reply = reply.replace("n", "\n")
+    print(f"Received from server: \n{reply}")
+
 
 clientSocket.close()
 print("Connection with the server closed")

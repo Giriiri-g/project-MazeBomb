@@ -5,25 +5,25 @@ import sys
 
 Map = """       ╔══════════╗                                                   
        ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
-       ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-       ╚══════╦═══╝                            ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+       ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙!∙∙∙∙∙∙∙∙∙║
+       ╚══════╦═══╝                            ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙║
               ▒                         ▒▒▒▒▒▒▒▒  ╚╦═════════════════╝
               ▒                         ▒          ▒                  
         ▒▒▒▒▒▒▒                    ▒▒▒▒▒▒          ▒▒▒▒▒▒             
 ╔═══════╩══════════╗               ▒              ╔═════╩════════════╗
 ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒            ▒              ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
 ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒  ╔═════════╩═╗            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒▒▒╣∙∙∙∙∙∙∙∙∙!∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙!∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
 ╚═══════╦══════════╝     ╚═════════╦═╝            ╚══════════════════╝
         ▒                   ▒▒▒▒▒▒▒▒                                  
         ▒▒▒▒▒▒▒▒▒▒▒       ╔═╩═╗                                       
        ╔══════════╩═╗    ▒╣∙∙∙║                          ╔════╗       
        ║∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒║∙∙∙║                          ║∙∙∙∙║       
-       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙∙∙∙║       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙!∙∙║       
        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙║       
-       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
+       ║∙∙∙∙∙!∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
        ╚════════════╝     ╚═══╝                          ╚════╝       
 """
 Map2 = """
@@ -90,6 +90,7 @@ pygame.display.set_caption("Rogue Bomber")
 
 black = (0, 0, 0)
 blue = (0, 255, 0)
+grey = (169,169,169)
 Player_pos = [10, 9]
 Map_pos = 720
 # curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
@@ -97,6 +98,29 @@ font = pygame.font.SysFont("monospace", 36) # use monospace font always, otherwi
 playermap = ""
 drawplayer(Map_pos)
 lines = playermap.split('\n')
+menu_active = False
+
+# menu surface
+
+desc = """Welcome to the Game!
+▒ : passage
+
+║ : a vertical wall
+
+═ : a horizontal wall
+
+╠ : door"""
+menu_lines = desc.split('\n')
+menu_height = len(menu_lines) * font.get_height()
+menu = pygame.Surface((font.size(max(menu_lines, key=len))[0], menu_height), pygame.SRCALPHA)
+menu.fill((0, 0, 0, 0))  # Make the surface transparent
+
+for i, line in enumerate(menu_lines):
+    text_surface = font.render(line, True, grey)
+    menu.blit(text_surface, (0, i * font.get_height()))
+
+menu_x = (screen.get_width() - menu.get_width()) // 2
+menu_y = (screen.get_height() - menu.get_height()) // 2
 
 
 clock = pygame.time.Clock()
@@ -108,31 +132,46 @@ while True:
                sys.exit()
 
           if event.type == pygame.KEYDOWN:
-               if event.key == pygame.K_a:
+               if event.key == pygame.K_a and menu_active == False:
                     move("a")
                     lines = playermap.split('\n')
                     print(playermap)
                     print("A")
-               if event.key == pygame.K_s:
+               if event.key == pygame.K_s and menu_active == False:
                     move("s")
                     lines = playermap.split('\n')
                     print(playermap)
                     print("S")
-               if event.key == pygame.K_w:
+               if event.key == pygame.K_w and menu_active == False:
                     move("w")
                     lines = playermap.split('\n')
                     print(playermap)
                     print("W")
-               if event.key == pygame.K_d:
+               if event.key == pygame.K_d and menu_active == False:
                     move("d")
                     lines = playermap.split('\n')
                     print(playermap)
                     print("D")
 
-     screen.fill(black)
+               if (event.key == pygame.K_ESCAPE):
+                    menu_active = False
+
+               if (event.key == pygame.K_SLASH):
+                    
+                    menu_active = True
+                    screen.fill(black)
+                    screen.blit(menu, (menu_x, menu_y))
+                    
+                    
+                    
+
+
+     
      # displaying each line in a text surface for efficient manipulation 
-     for i, line in enumerate(lines):
-          text_surface = font.render(line, True, blue)
-          screen.blit(text_surface, (0, i * 40))
+     if menu_active == False:
+          screen.fill(black)
+          for i, line in enumerate(lines):
+               text_surface = font.render(line, True, blue)
+               screen.blit(text_surface, (0, i * 40))
      pygame.display.flip()
      clock.tick(60)
