@@ -4,6 +4,10 @@ import pygame
 import sys
 import txtlib
 
+pygame.init()
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+pygame.display.set_caption("Rogue Bomber")
+
 Map = """       ╔══════════╗                                                   
        ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
        ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙!∙∙∙∙∙∙∙∙∙║
@@ -27,18 +31,6 @@ Map = """       ╔══════════╗
        ║∙∙∙∙∙!∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
        ╚════════════╝     ╚═══╝                          ╚════╝       
 """
-Map2 = """
-══════════════════............................
-═................═............................
-═....@...........═.......═════════════════════
-═................═-------═.!.................═
-═................╠.......╠...................═
-═................═-------═..............!....═
-═...........!....═.......═...................═
-═................═.......═════════════════════
-══════════════════............................
-"""
-#Map2='══════════════════                            \n═                ═                            \n═    @           ═       ═════════════════════\n═                ═-------═ !                 ═\n═                ╠       ╠                   ═\n═                ═-------═              !    ═\n═           !    ═       ═                   ═\n═                ═       ═════════════════════\n══════════════════                            \n'
 
 
 def move(d):
@@ -83,19 +75,42 @@ def drawplayer(mappos):
      global playermap
      playermap = Map[:mappos]+"@"+Map[mappos+1:]
 
+def draw_map():
+     screen.fill(black)
+     for i, line in enumerate(lines):
+          for j, char in enumerate(line):
+               color = black  # Default color for characters not explicitly defined
+               if char in ['║','═','╗','╝','╚','╔','╦','╣','╠','╩']:
+                    color = wall_color
+               elif char == "∙":
+                    color = movable_space_color
+               elif char == "!":
+                    color = exclamation_color
+               elif char == "▒":
+                    color = passage_color
+               elif char == "@":
+                    color = player_color
 
-pygame.init()
+               text_surface = font.render(char, True, color)
+               screen.blit(text_surface, (j * 19, i * 30))
 
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-pygame.display.set_caption("Rogue Bomber")
+
+
 
 black = (0, 0, 0)
 blue = (0, 255, 0)
 grey = (169,169,169)
+wall_color = (170, 85, 0)
+movable_space_color = (80, 240, 80)
+exclamation_color = (251, 251, 84)
+passage_color = (167, 167, 167)
+player_color = (0, 0, 255)
+
+
 Player_pos = [10, 9]
 Map_pos = 720
 # curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
-font = pygame.font.SysFont("monospace", 32) # use monospace font always, otherwise the text alignment will be off
+font = pygame.font.SysFont("Courier New", 32) # use monospace font always, otherwise the text alignment will be off
 playermap = ""
 drawplayer(Map_pos)
 lines = playermap.split('\n')
@@ -129,12 +144,6 @@ for i, line in enumerate(menu_lines):
 menu_x = (screen.get_width() - menu.get_width()) // 2
 menu_y = (screen.get_height() - menu.get_height()) // 2
 
-
-"""
-text = txtlib.Text((600, 400), 'monospace')
-text.text = Map
-text.add_style(, 162, txtlib.COLOR, (0, 255, 0))
-"""
 # Main Loop
 
 clock = pygame.time.Clock()
@@ -146,7 +155,7 @@ while True:
                sys.exit()
 
           if event.type == pygame.KEYDOWN:
-               if event.key == pygame.K_q:
+               if event.key == pygame.K_q and menu_active == True:
                     print("Shutting Down")
                     pygame.quit()
                     sys.exit()
@@ -187,9 +196,6 @@ while True:
      
      # displaying each line in a text surface for efficient manipulation 
      if menu_active == False:
-          screen.fill(black)
-          for i, line in enumerate(lines):
-               text_surface = font.render(line, True, blue)
-               screen.blit(text_surface, (0, i * 35))
+          draw_map()
      pygame.display.flip()
      clock.tick(60)

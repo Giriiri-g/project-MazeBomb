@@ -1,16 +1,6 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-
 import pygame
-import txtlib
-import sys
+from assets import *
 
-pygame.init()
-
-screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Text Rendering Test")
-
-# Define the map string
 Map = """       ╔══════════╗                                                   
        ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
        ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙!∙∙∙∙∙∙∙∙∙║
@@ -35,35 +25,63 @@ Map = """       ╔══════════╗
        ╚════════════╝     ╚═══╝                          ╚════╝       
 """
 
-font = pygame.font.SysFont("monospace", 32)
+def move(d):
+     global Player_pos
+     if d=="a":
+          calcpos = [Player_pos[0], Player_pos[1]-1]
+          calcmappos = mapindexer(calcpos)
+          if checkvalid(calcmappos):
+               Player_pos = calcpos
+               drawplayer(calcmappos)
+               
+     elif d=="s":
+          calcpos = [Player_pos[0]+1, Player_pos[1]]
+          calcmappos = mapindexer(calcpos)
+          if checkvalid(calcmappos):
+               Player_pos = calcpos
+               drawplayer(calcmappos)
+     elif d=="w":
+          calcpos = [Player_pos[0]-1, Player_pos[1]]
+          calcmappos = mapindexer(calcpos)
+          if checkvalid(calcmappos):
+               Player_pos = calcpos
+               drawplayer(calcmappos)
+     elif d=="d":
+          calcpos = [Player_pos[0], Player_pos[1]+1]
+          calcmappos = mapindexer(calcpos)
+          print(calcpos, calcmappos)
+          if checkvalid(calcmappos):
+               Player_pos = calcpos
+               print("move valid")
+               drawplayer(calcmappos)
 
-text = txtlib.Text(pygame.display.get_surface().get_size(), font=font)
-text.text = Map
-text.set_background_color((0, 0, 0))
-text.add_style(0, len(Map), txtlib.COLOR, (255, 255, 255))
-text.add_style(0, len(Map), txtlib.SIZE, 32)
-text.update()
+def checkvalid(mappos):
+     if Map[mappos] in ['║','═','╗','╝','╚','╔', " "]:
+          return False
+     return True
 
-screen.blit(text.area, (200, 100))
-pygame.display.flip()
+def mapindexer(pos):
+     return pos[0]*71 + pos[1] + 1
 
+def drawplayer(mappos):
+     global playermap
+     playermap = Map[:mappos]+"@"+Map[mappos+1:]
 
-print("Text:", text.text)
-for point in text.points:
-    print(f"Class: {point.classe}, Type: {point.type}, Pos: {point.pos}, Attr: {point.attr}")
-while True:
-    event = pygame.event.wait()
-    if event.type == pygame.QUIT:
-        pygame.quit()
-        sys.exit()
+def draw_map():
+     screen.fill(black)
+     for i, line in enumerate(lines):
+          for j, char in enumerate(line):
+               color = black  # Default color for characters not explicitly defined
+               if char in ['║','═','╗','╝','╚','╔','╦','╣','╠','╩']:
+                    color = wall_color
+               elif char == "∙":
+                    color = movable_space_color
+               elif char == "!":
+                    color = exclamation_color
+               elif char == "▒":
+                    color = passage_color
+               elif char == "@":
+                    color = player_color
 
-    # Debugging prints
-    y_position = 0  # Initialize Y-coordinate
-    for id, point in enumerate(text.points[:-1]):
-        char = 1 if text.text[point.pos] == " " else 0
-        rendered_text = text.replace(text.text[point.pos-char: text.points[id + 1].pos-char])
-        print("Rendering:", rendered_text)
-        screen.blit(rendered_text, (0, y_position))
-        y_position += 32  # Adjust this value based on the font size to avoid overlapping
-
-    pygame.display.flip()
+               text_surface = font.render(char, True, color)
+               screen.blit(text_surface, (j * 19, i * 30))
