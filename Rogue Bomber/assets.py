@@ -1,3 +1,5 @@
+import pygame
+
 class Asset:
     def __init__(self):
         self.black = (0, 0, 0)
@@ -11,3 +13,4 @@ class Asset:
         self.menu_active = False
         self.player_spawn = [10, 9]
         self.map_spawn = 720
+        self.font = pygame.font.Font("Assets\\fonts\\ttf - Mx (mixed outline+bitmap)\Mx437_IBM_BIOS.ttf", 60)
