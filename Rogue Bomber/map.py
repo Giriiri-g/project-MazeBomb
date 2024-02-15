@@ -1,7 +1,12 @@
 import pygame
+import assets
+from Bomb import bomb
+
+
 
 class Map:
-    def __init__(self, Asset Map=None):
+    def __init__(self, Asset, Map=None):
+        self.Asset = Asset
         if Map is None:
             self.Map =  """       ╔══════════╗                                                   
        ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
@@ -78,23 +83,33 @@ class Map:
 
     def draw_map(self):
         surf = pygame.Surface((self.height, self.widt))  # Create a surface with the same size as the screen
-        surf.fill(Asset.black)  # Fill the surface with black background
+        surf.fill(self.Asset.black)  # Fill the surface with black background
         lines = self.playermap.split('\n')
         for i, line in enumerate(lines):
             for j, char in enumerate(line):
-                color = Asset.grey
+                color = self.Asset.grey
                 if char in ['║', '═', '╗', '╝', '╚', '╔', '╦', '╣', '╠', '╩']:
-                    color = Asset.wall_color
+                    color = self.Asset.wall_color
                 elif char == "∙":
-                    color = Asset.movable_space_color
+                    color = self.Asset.movable_space_color
                 elif char == "!":
-                    color = Asset.exclamation_color
+                    color = self.Asset.exclamation_color
                 elif char == "▒":
-                    color = Asset.passage_color
+                    color = self.Asset.passage_color
                 elif char == "@":
-                    color = Asset.player_color
+                    color = self.Asset.player_color
 
                 text_surface = pygame.font.render(char, True, color)
                 surf.blit(text_surface, (j * 19, i * 30))
 
         return surf
+    
+        
+    def placebomb(self):
+        self.Asset.bombs.append(bomb(self.Player_pos))
+        self.drawbomb(self.Player_pos)
+
+    def drawbomb(self, pos):
+        mappos = self.mapindexer(pos)
+        self.Map = self.Map[:mappos] + "♦" + self.Map[mappos+1:]
+        

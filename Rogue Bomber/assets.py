@@ -2,6 +2,8 @@ import pygame
 
 class Asset:
     def __init__(self):
+        pygame.init()
+        self.menu_active = False
         self.black = (0, 0, 0)
         self.white = (255, 255, 255)
         self.grey = (169, 169, 169)
@@ -13,4 +15,14 @@ class Asset:
         self.menu_active = False
         self.player_spawn = [10, 9]
         self.map_spawn = 720
-        self.font = pygame.font.Font("Assets\\fonts\\ttf - Mx (mixed outline+bitmap)\Mx437_IBM_BIOS.ttf", 60)
+        self.font = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 60)
+        self.font2 = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Px (pixel outline)/PxPlus_IBM_BIOS.ttf", 40)
+        self.font3 = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 30)
+        self.bombs = []
+        self.height = 750
+        self.width = 1200
+        self.homepage_bg = "Rogue Bomber/Assets/Bomber.png"
+        self.text_color = (255, 255, 255)
+        self.background_color = (5, 22, 26)
+        self.text_input_box_color = (0, 0, 0)
+        self.text_input_bg_color = (255, 255, 255)

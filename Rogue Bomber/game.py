@@ -15,9 +15,17 @@ def run_game():
         pygame.display.flip()
         clock.tick(60)
 
+def tickbombs():
+    global bombs
+    for b in bombs:
+        if b.tick():
+            bombs.remove(b)
+            drawbomb(b.getpos())
+
 if __name__ == "__main__":
     pygame.init()
     clock = pygame.time.Clock()
     pygame.display.set_caption("Rogue Bomber")
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     run_game()
+
