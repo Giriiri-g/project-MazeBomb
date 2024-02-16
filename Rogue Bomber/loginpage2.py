@@ -1,11 +1,12 @@
-# loginpage.py
 import sys
 import pygame
 import assets
 
-asset = assets.Asset()
+# Move the declaration of user_text outside of the display_login_page function
+user_text = ''
 
 def display_login_page(screen):
+    asset = assets.Asset()
     background_image = pygame.transform.scale(pygame.image.load(asset.homepage_bg), (asset.width, asset.height))
 
     font = asset.font
@@ -36,6 +37,7 @@ def display_login_page(screen):
         pygame.display.flip()
 
     def create_login_surface():
+        global user_text  # Declare user_text as global to modify it within this function
         login_surface = pygame.Surface((asset.width, asset.height))  # Create a surface with desired dimensions
         drop_text_animation(word_to_display)
         message_text = "Enter your username and press Space to Start the Game!"
@@ -50,7 +52,6 @@ def display_login_page(screen):
         
         # Create a text input box
         input_box = pygame.Rect(asset.width // 2 - 200, asset.height // 2 + 175, 400, 50)
-        user_text = ''
         font2 = asset.font2
     
         login_surface.blit(background_image, (0, 0))  # Redraw background image
@@ -65,9 +66,9 @@ def display_login_page(screen):
         pygame.draw.rect(login_surface, asset.text_input_box_color, input_box)  # Border for the input box
         pygame.draw.rect(login_surface, asset.text_input_bg_color, input_box)   # Background color for the input box
         
-        return login_surface
+        return login_surface, input_box, user_text  # Return user_text from the function
 
-    login_surface = create_login_surface()
+    login_surface, input_box, user_text = create_login_surface()
 
     screen.blit(login_surface, (0, 0))
     pygame.display.flip()
@@ -79,6 +80,31 @@ def display_login_page(screen):
                 sys.exit()
             
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    print("Space key pressed! Starting the game...")
-                    # Replace this with the code to start your game
+                if event.key == pygame.K_RETURN:
+                    print("Enter key pressed! Starting the game...")
+                    return 'game'
+                elif event.key == pygame.K_BACKSPACE:
+                    # Remove the last character from the user_text if backspace is pressed
+                    user_text = user_text[:-1]
+                else:
+                    # Check if the length of user_text is less than 8 before adding a character
+                    if len(user_text) < 8:
+                        # Add the pressed character to user_text
+                        user_text += event.unicode
+
+        # Clear the input box before re-drawing
+        pygame.draw.rect(login_surface, asset.text_input_bg_color, input_box)
+        
+        # Render the text on the input box surface
+        font2 = asset.font2
+        text_surface = font2.render(user_text, True, text_color)
+        # Adjust position of the text
+        text_rect = text_surface.get_rect()
+        text_rect.center = input_box.center
+        login_surface.blit(text_surface, text_rect)
+        
+        # Draw the input box
+        pygame.draw.rect(login_surface, asset.text_input_box_color, input_box, 2)  # Border for the input box
+        
+        screen.blit(login_surface, (0, 0))
+        pygame.display.flip()

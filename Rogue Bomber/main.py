@@ -4,10 +4,12 @@ import assets
 from homepage import display_homepage
 from loginpage2 import display_login_page
 from game import run_game
+from map import Map
 
 pygame.init()
 
 asset = assets.Asset()
+Map = Map(asset)
 screen = pygame.display.set_mode((asset.width, asset.height))
 pygame.display.set_caption("Rogue Bomber")
 
@@ -21,7 +23,7 @@ while True:
     elif current_page == "login":
         next_page = display_login_page(screen)
     elif current_page == "game":
-        next_page = run_game(screen, asset)
+        next_page = run_game(screen, asset, Map)
 
     # Check if the page should change
     if next_page:

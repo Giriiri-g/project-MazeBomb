@@ -2,7 +2,6 @@
 
 import pygame
 import sys
-import txtlib
 
 pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -162,22 +161,18 @@ while True:
                if event.key == pygame.K_a and menu_active == False:
                     move("a")
                     lines = playermap.split('\n')
-                    print(playermap)
                     print("A")
                if event.key == pygame.K_s and menu_active == False:
                     move("s")
                     lines = playermap.split('\n')
-                    print(playermap)
                     print("S")
                if event.key == pygame.K_w and menu_active == False:
                     move("w")
                     lines = playermap.split('\n')
-                    print(playermap)
                     print("W")
                if event.key == pygame.K_d and menu_active == False:
                     move("d")
                     lines = playermap.split('\n')
-                    print(playermap)
                     print("D")
 
                if (event.key == pygame.K_ESCAPE):
