@@ -21,7 +21,7 @@ class Asset:
         self.bombs = []
         self.height = 750
         self.width = 1200
-        self.homepage_bg = "Rogue Bomber/Assets/Bomber.png"
+        self.homepage_bg = "C:\\ps\\Project MazeBomb\\project-MazeBomb\\Rogue Bomber\\Assets\\Bomber.png"
         self.text_color = (255, 255, 255)
         self.background_color = (5, 22, 26)
         self.text_input_box_color = (0, 0, 0)

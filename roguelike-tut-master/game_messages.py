@@ -2,7 +2,7 @@ import tcod as libtcodpy
 import textwrap
 
 class Message:
-	def __init__(self, text, color=libtcodpy.white):
+	def __init__(self, text, color=(255, 255, 255)):
 		self.text = text
 		self.color = color
 		
