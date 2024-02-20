@@ -46,6 +46,6 @@ def load_user_data(username):
         return None
 
 # Example usage:
-# username = input("Enter your username: ")
-# user_data = load_user_data(username)
+username = input("Enter your username: ")
+user_data = load_user_data(username)
 
