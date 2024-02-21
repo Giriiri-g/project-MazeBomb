@@ -1,4 +1,6 @@
 import mysql.connector
+import socket
+from datetime import datetime
 
 def load_user_data(username):
     try:
@@ -45,7 +47,50 @@ def load_user_data(username):
         print("Error connecting to MySQL:", e)
         return None
 
-# # Example usage:
-# username = input("Enter your username: ")
-# user_data = load_user_data(username)
 
+def get_user_ip():
+    # Get the hostname
+    hostname = socket.gethostname()
+    # Get the IP address associated with the hostname
+    ip_address = socket.gethostbyname(hostname)
+    print(ip_address)
+    return ip_address
+
+def insert_user_data(username, ip_address):
+    try:
+        # Validate IP address format
+        if socket.inet_aton(ip_address):
+            # Connect to the MySQL database
+            conn = mysql.connector.connect(
+                host='localhost',
+                user='root',
+                password="asdfghjkl;'",
+                database='rogue'
+            )
+
+            cursor = conn.cursor()
+
+            # Get current timestamp
+            login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # Execute a query to insert the user data into the database
+            cursor.execute("INSERT INTO users (username, IP_Address, login_time) VALUES (%s, %s, %s)", (username, ip_address, login_time))
+            
+            # Commit the transaction
+            conn.commit()
+
+            # Close the cursor and connection to the database
+            cursor.close()
+            conn.close()
+
+            print("User data inserted successfully!")
+        else:
+            print("Invalid IP address format:", ip_address)
+    
+    except mysql.connector.Error as e:
+        print("Error inserting user data:", e)
+
+# Example usage:
+username = input("Enter your username: ")
+ip_address = get_user_ip()
+insert_user_data(username, ip_address)
