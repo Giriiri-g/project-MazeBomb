@@ -13,7 +13,7 @@ def display_login(asset):
     def on_enter_pressed(event, entry):
         name = entry.get()
         print(f"User Name: {name}")
-        # database.load_user_data(name)
+        database.load_user_data(name)
         root.destroy()
         return "game"
 
