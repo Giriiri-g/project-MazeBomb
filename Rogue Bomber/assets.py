@@ -19,7 +19,7 @@ class Asset:
         self.font2 = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Px (pixel outline)/PxPlus_IBM_BIOS.ttf", 40)
         self.font3 = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 30)
         self.bombs = []
-        self.height = 750
+        self.height = 800
         self.width = 1200
         self.homepage_bg = "Rogue Bomber/Assets/Bomber.png"
         self.text_color = (255, 255, 255)
