@@ -1,5 +1,6 @@
 import mysql.connector
 import socket
+from datetime import datetime
 
 def load_user_data(username):
     try:
@@ -54,6 +55,7 @@ def get_user_ip():
     ip_address = socket.gethostbyname(hostname)
     print(ip_address)
     return ip_address
+
 def insert_user_data(username, ip_address):
     try:
         # Validate IP address format
@@ -68,8 +70,11 @@ def insert_user_data(username, ip_address):
 
             cursor = conn.cursor()
 
+            # Get current timestamp
+            login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
             # Execute a query to insert the user data into the database
-            cursor.execute("INSERT INTO users (username, IP_Address) VALUES (%s, %s)", (username, ip_address))
+            cursor.execute("INSERT INTO users (username, IP_Address, login_time) VALUES (%s, %s, %s)", (username, ip_address, login_time))
             
             # Commit the transaction
             conn.commit()
