@@ -4,7 +4,7 @@ import pygame
 import sys
 
 def run_game(screen):
-    global Map, Player_pos, playermap, lines, menu_active, message_surface
+    global Map, Player_pos, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font
 
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -15,11 +15,15 @@ def run_game(screen):
     exclamation_color = (251, 251, 84)
     passage_color = (167, 167, 167)
     player_color = (0, 0, 255)
-
-
-    message_surface = pygame.Surface((80*15, 100))
-    font = pygame.font.SysFont("Courier New", 28) # use monospace font always, otherwise the text alignment will be off
-
+    font = pygame.font.SysFont("Courier New", 28)
+    font2 = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 18)
+    hud_surface = pygame.Surface((1200, 60))
+    hud_surface.fill((169, 169, 169))
+    hud_names = ["Giriirig", "PsylectrA", "Puchandi", "cumlord"]
+    hud_values = [["♥♥♥♥♥", 1, 1], ["♥♥♥", 0, 2], ["", 3, 0], ["♥♥♥♥", 2, 1]]
+    surface_width = 298
+    surface_height = 58
+    player_huds = [pygame.Surface((surface_width, surface_height)) for _ in range(4)]
 
     pygame.init()
     # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -107,14 +111,29 @@ def run_game(screen):
                         color = player_color
 
                 text_surface = font.render(char, True, color)
-                offset = (j * 15 + 75, i * 28 + 80)
+                offset = (j * 15 + 75, i * 28 + 120)
                 screen.blit(text_surface, offset)
                 # text_rect = text_surface.get_rect()
                 # text_rect.topleft = offset
                 # screen.blit(text_surface, text_rect)
                 # pygame.draw.rect(screen, (255, 255, 255), text_rect, 1)
 
-
+    def draw_hud():
+        hud_surface.fill(grey)
+        x_positions = [1, 301, 601, 901]
+        y_position = 1
+        screen.blit(hud_surface, (0, 0))
+        for i, (name, values) in enumerate(zip(hud_names, hud_values)):
+            player_huds[i].fill((0, 0, 0))
+            name_text = font2.render(name, True, white)
+            player_huds[i].blit(name_text, (10, 5))
+            hearts_text = font2.render(values[0], True, white)
+            player_huds[i].blit(hearts_text, (200, 6))
+            val1_text = font2.render("☼x"+str(values[1]), True, white)
+            player_huds[i].blit(val1_text, (10, 30))
+            val2_text = font2.render("ɸx"+str(values[2]), True, white)
+            player_huds[i].blit(val2_text, (val1_text.get_width() + 200, 30))
+            screen.blit(player_huds[i], (x_positions[i], y_position))
 
 
 
@@ -124,6 +143,7 @@ def run_game(screen):
     # curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
     playermap = ""
     drawplayer(Map_pos)
+    draw_hud()
     lines = playermap.split('\n')
     menu_active = False
 
@@ -200,13 +220,14 @@ def run_game(screen):
         # displaying each line in a text surface for efficient manipulation 
         if menu_active == False:
             draw_map()
+            draw_hud()
         pygame.display.flip()
         clock.tick(60)
 
 
-import assets
-pygame.init()
-asset = assets.Asset()
-screen = pygame.display.set_mode((asset.width, asset.height))
-pygame.display.set_caption("Rogue Bomber")
-run_game(screen)
+# import assets
+# pygame.init()
+# asset = assets.Asset()
+# screen = pygame.display.set_mode((asset.width, asset.height))
+# pygame.display.set_caption("Rogue Bomber")
+# run_game(screen)
