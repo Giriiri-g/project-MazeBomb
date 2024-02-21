@@ -4,10 +4,10 @@ import pygame
 import sys
 
 def run_game(screen):
-    global Map, Player_pos, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players
+    global Map, Player_pos, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map
 
 
-    players = [[10,9], [70,5]]
+    players = [[10,9], [11,30], [10, 58], [18, 27]]
     white = (255, 255, 255)
     black = (0, 0, 0)
     red = (255, 0, 0)
@@ -54,11 +54,33 @@ def run_game(screen):
        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
        ╚════════════╝     ╚═══╝                          ╚════╝       
 """
+    og_Map =  """       ╔══════════╗                                                   
+       ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
+       ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+       ╚══════╦═══╝                            ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+              ▒                         ▒▒▒▒▒▒▒▒  ╚╦═════════════════╝
+              ▒                         ▒          ▒                  
+        ▒▒▒▒▒▒▒                    ▒▒▒▒▒▒          ▒▒▒▒▒▒             
+╔═══════╩══════════╗               ▒              ╔═════╩════════════╗
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒            ▒              ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒  ╔═════════╩═╗            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+╚═══════╦══════════╝     ╚═════════╦═╝            ╚══════════════════╝
+        ▒                   ▒▒▒▒▒▒▒▒                                  
+        ▒▒▒▒▒▒▒▒▒▒▒       ╔═╩═╗                                       
+       ╔══════════╩═╗    ▒╣∙∙∙║                          ╔════╗       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒║∙∙∙║                          ║∙∙∙∙║       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙∙∙∙║       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙║       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
+       ╚════════════╝     ╚═══╝                          ╚════╝       
+"""
 
-
-    def move(d):
-        global Player_pos, lines, Map, hud_values
-        new_pos = Player_pos[:]  # Create a copy of the player's position
+    def move(d, player):
+        global lines, Map, hud_values, players
+        new_pos = players[player][:]  # Create a copy of the player's position
         if d == "a":
             new_pos[1] -= 1
         elif d == "s":
@@ -72,11 +94,10 @@ def run_game(screen):
         if checkvalid(new_map_pos):
             if Map[new_map_pos] == '!':
                 Map = Map[:new_map_pos] + '∙' + Map[new_map_pos + 1:]
-                if hud_values[0][1] < 3:
-                    hud_values[0][1]+=1
-            Player_pos = new_pos
-            drawplayer(new_map_pos)
-            lines = playermap.split('\n')
+                if hud_values[player][1] < 3:
+                    hud_values[player][1]+=1
+            players[player] = new_pos
+            drawplayer()
 
     def checkvalid(mappos):
         global Map
@@ -87,9 +108,17 @@ def run_game(screen):
     def mapindexer(pos):
         return pos[0]*71 + pos[1] + 1
 
-    def drawplayer(mappos):
-        global playermap, Map
-        playermap = Map[:mappos]+"@"+Map[mappos+1:]
+    def drawplayer():
+        global playermap, Map, players, lines
+        mappos = [mapindexer(i) for i in players]
+        playermap = list(Map)
+        playermap[mappos[0]] = "@"
+        playermap[mappos[1]] = "#"
+        playermap[mappos[2]] = "$"
+        playermap[mappos[3]] = "&"
+        playermap = ''.join(playermap)
+        lines = playermap.split('\n')
+        
 
     def draw_map():
         screen.fill(black)
@@ -104,7 +133,7 @@ def run_game(screen):
                     color = exclamation_color
                 elif char == "▒":
                     color = passage_color
-                elif char == "@":
+                elif char in ["@", "#", "$", "&"]:
                     color = player_color
 
                 text_surface = font.render(char, True, color)
@@ -112,12 +141,14 @@ def run_game(screen):
                 screen.blit(text_surface, offset)
 
     def draw_hud():
+        global players
         hud_surface.fill(grey)
         x_positions = [1, 301, 601, 901]
         y_position = 1
         screen.blit(hud_surface, (0, 0))
         for i, (name, values) in enumerate(zip(hud_names, hud_values)):
             if len(values[0]) == 0:
+                players[i] = [2, 27]
                 font_color = red
             else:
                 font_color = white
@@ -133,16 +164,33 @@ def run_game(screen):
             screen.blit(player_huds[i], (x_positions[i], y_position))
 
 
-    def place_bomb():
-         global Player_pos, Map
-         Map = Map[:mapindexer(Player_pos)] + '☼' + Map[mapindexer(Player_pos)+1:]
-         drawplayer(mapindexer(Player_pos))
+    def place_bomb(player):
+         global Map, bombs, players, playermap
+         bombs.append([players[player], 120])
+         Map = Map[:mapindexer(players[player])] + '☼' + Map[mapindexer(players[player])+1:]
+         drawplayer()
+         hud_values[player][1] -= 1
 
-    Player_pos = [10, 9]
-    Map_pos = 720
+    def explode(index):
+        global Map, bombs, players, og_Map
+        bomb = bombs[index]
+        Map = Map[:mapindexer(bomb[0])] + og_Map[mapindexer(bomb[0])] + Map[mapindexer(bomb[0])+1:]
+        bombs.pop(index)
+        x,y = bomb[0][0], bomb[0][1]
+        radius = [[x-1,y-1],[x,y-1],[x+1,y-1],[x-1,y],[x,y],[x+1,y],[x-1,y+1],[x,y+1],[x+1,y+1]]
+        for ind, player in enumerate(players):
+            if player in radius:
+                hud_values[ind][0] = hud_values[ind][0][:-1]
+        drawplayer()
+        draw_map()
+        draw_hud()
+
+    # Player_pos = [10, 9]
+    player = 0
+    # Map_pos = 720
     # curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
     playermap = ""
-    drawplayer(Map_pos)
+    drawplayer()
     draw_hud()
     lines = playermap.split('\n')
     menu_active = False
@@ -178,7 +226,7 @@ def run_game(screen):
     # Main Loop
 
     clock = pygame.time.Clock()
-
+    fps = 60
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -191,17 +239,16 @@ def run_game(screen):
                         pygame.quit()
                         sys.exit()
                 if event.key == pygame.K_a and menu_active == False:
-                        move("a")
+                        move("a", player)
                 if event.key == pygame.K_s and menu_active == False:
-                        move("s")
+                        move("s", player)
                 if event.key == pygame.K_w and menu_active == False:
-                        move("w")
+                        move("w", player)
                 if event.key == pygame.K_d and menu_active == False:
-                        move("d")
+                        move("d", player)
                 if event.key == pygame.K_b and menu_active == False:
                         if hud_values[0][1]>0:
-                            place_bomb()
-                            hud_values[0][1] -= 1
+                            place_bomb(player)
 
                 if (event.key == pygame.K_ESCAPE):
                         menu_active = False
@@ -213,6 +260,11 @@ def run_game(screen):
                         screen.blit(menu, (menu_x, menu_y))
                         
                         
+
+        for ind, i in enumerate(bombs):
+             i[1] -= 1
+             if i[1] == 0:
+                  explode(ind)
                         
         if Map.count('!') <= 8 and random.random() < 0.005:
             movable_indices = [i for i, char in enumerate(Map) if char == '∙']
@@ -223,6 +275,8 @@ def run_game(screen):
         
 
         if menu_active == False:
+            drawplayer()
+
             draw_map()
             draw_hud()
         pygame.display.flip()
