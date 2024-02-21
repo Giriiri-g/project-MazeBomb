@@ -3,50 +3,52 @@
 import pygame
 import sys
 
-## [ constants ]
-
-Map = """       ╔══════════╗                                                   
-        ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
-        ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙!∙∙∙∙∙∙∙∙∙║
-        ╚══════╦═══╝                            ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙║
-                ▒                         ▒▒▒▒▒▒▒▒  ╚╦═════════════════╝
-                ▒                         ▒          ▒                  
-            ▒▒▒▒▒▒▒                    ▒▒▒▒▒▒          ▒▒▒▒▒▒             
-    ╔═══════╩══════════╗               ▒              ╔═════╩════════════╗
-    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒            ▒              ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒  ╔═════════╩═╗            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒▒▒╣∙∙∙∙∙∙∙∙∙!∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙∙║
-    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙!∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-    ╚═══════╦══════════╝     ╚═════════╦═╝            ╚══════════════════╝
-            ▒                   ▒▒▒▒▒▒▒▒                                  
-            ▒▒▒▒▒▒▒▒▒▒▒       ╔═╩═╗                                       
-        ╔══════════╩═╗    ▒╣∙∙∙║                          ╔════╗       
-        ║∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒║∙∙∙║                          ║∙∙∙∙║       
-        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙!∙∙║       
-        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙║       
-        ║∙∙∙∙∙!∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
-        ╚════════════╝     ╚═══╝                          ╚════╝       
-"""
-black = (0, 0, 0)
-blue = (0, 255, 0)
-grey = (169,169,169)
-wall_color = (170, 85, 0)
-movable_space_color = (80, 240, 80)
-exclamation_color = (251, 251, 84)
-passage_color = (167, 167, 167)
-player_color = (0, 0, 255)
-
-
-
-
 def run_game(screen):
+    global Map, Player_pos, playermap, lines, menu_active, message_surface
+
+    white = (255, 255, 255)
+    black = (0, 0, 0)
+    blue = (0, 255, 0)
+    grey = (169,169,169)
+    wall_color = (170, 85, 0)
+    movable_space_color = (80, 240, 80)
+    exclamation_color = (251, 251, 84)
+    passage_color = (167, 167, 167)
+    player_color = (0, 0, 255)
+
+
+    message_surface = pygame.Surface((80*15, 100))
+    font = pygame.font.SysFont("Courier New", 28) # use monospace font always, otherwise the text alignment will be off
+
 
     pygame.init()
     # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     pygame.display.set_caption("Rogue Bomber")
 
-    
+    Map =  """       ╔══════════╗                                                   
+       ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
+       ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙!∙∙∙∙∙∙∙∙∙║
+       ╚══════╦═══╝                            ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙║
+              ▒                         ▒▒▒▒▒▒▒▒  ╚╦═════════════════╝
+              ▒                         ▒          ▒                  
+        ▒▒▒▒▒▒▒                    ▒▒▒▒▒▒          ▒▒▒▒▒▒             
+╔═══════╩══════════╗               ▒              ╔═════╩════════════╗
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒            ▒              ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒  ╔═════════╩═╗            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒▒▒╣∙∙∙∙∙∙∙∙∙!∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙∙║
+║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙!∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+╚═══════╦══════════╝     ╚═════════╦═╝            ╚══════════════════╝
+        ▒                   ▒▒▒▒▒▒▒▒                                  
+        ▒▒▒▒▒▒▒▒▒▒▒       ╔═╩═╗                                       
+       ╔══════════╩═╗    ▒╣∙∙∙║                          ╔════╗       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒║∙∙∙║                          ║∙∙∙∙║       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙!∙∙║       
+       ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙║       
+       ║∙∙∙∙∙!∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
+       ╚════════════╝     ╚═══╝                          ╚════╝       
+"""
+
 
     def move(d):
         global Player_pos
@@ -72,14 +74,11 @@ def run_game(screen):
         elif d=="d":
             calcpos = [Player_pos[0], Player_pos[1]+1]
             calcmappos = mapindexer(calcpos)
-            print(calcpos, calcmappos)
             if checkvalid(calcmappos):
                 Player_pos = calcpos
-                print("move valid")
                 drawplayer(calcmappos)
 
     def checkvalid(mappos):
-        global Map
         if Map[mappos] in ['║','═','╗','╝','╚','╔', " "]:
             return False
         return True
@@ -88,11 +87,10 @@ def run_game(screen):
         return pos[0]*71 + pos[1] + 1
 
     def drawplayer(mappos):
-        global playermap, Map
+        global playermap
         playermap = Map[:mappos]+"@"+Map[mappos+1:]
 
     def draw_map():
-        global black, lines, wall_color, movable_space_color, exclamation_color, passage_color, player_color, screen
         screen.fill(black)
         for i, line in enumerate(lines):
             for j, char in enumerate(line):
@@ -109,15 +107,21 @@ def run_game(screen):
                         color = player_color
 
                 text_surface = font.render(char, True, color)
-                screen.blit(text_surface, (j * 19, i * 30))
+                offset = (j * 15 + 75, i * 28 + 80)
+                screen.blit(text_surface, offset)
+                # text_rect = text_surface.get_rect()
+                # text_rect.topleft = offset
+                # screen.blit(text_surface, text_rect)
+                # pygame.draw.rect(screen, (255, 255, 255), text_rect, 1)
 
-    
+
+
+
 
 
     Player_pos = [10, 9]
     Map_pos = 720
     # curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
-    font = pygame.font.SysFont("Courier New", 32) # use monospace font always, otherwise the text alignment will be off
     playermap = ""
     drawplayer(Map_pos)
     lines = playermap.split('\n')
@@ -169,19 +173,15 @@ def run_game(screen):
                 if event.key == pygame.K_a and menu_active == False:
                         move("a")
                         lines = playermap.split('\n')
-                        print("A")
                 if event.key == pygame.K_s and menu_active == False:
                         move("s")
                         lines = playermap.split('\n')
-                        print("S")
                 if event.key == pygame.K_w and menu_active == False:
                         move("w")
                         lines = playermap.split('\n')
-                        print("W")
                 if event.key == pygame.K_d and menu_active == False:
                         move("d")
                         lines = playermap.split('\n')
-                        print("D")
 
                 if (event.key == pygame.K_ESCAPE):
                         menu_active = False
@@ -202,3 +202,11 @@ def run_game(screen):
             draw_map()
         pygame.display.flip()
         clock.tick(60)
+
+
+import assets
+pygame.init()
+asset = assets.Asset()
+screen = pygame.display.set_mode((asset.width, asset.height))
+pygame.display.set_caption("Rogue Bomber")
+run_game(screen)
