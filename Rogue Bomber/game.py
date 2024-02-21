@@ -1,34 +1,52 @@
+##[ MAZE-bOMB ]
+
 import pygame
 import sys
-from map import Map
-Player_pos = [10, 9]
-Map_pos = 720
 
-def run_game(screen, asset, map_instance):
-    Map = """       ╔══════════╗                                                   
-    ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
-    ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙!∙∙∙∙∙∙∙∙∙║
-    ╚══════╦═══╝                            ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙║
-            ▒                         ▒▒▒▒▒▒▒▒  ╚╦═════════════════╝
-            ▒                         ▒          ▒                  
-        ▒▒▒▒▒▒▒                    ▒▒▒▒▒▒          ▒▒▒▒▒▒             
-╔═══════╩══════════╗               ▒              ╔═════╩════════════╗
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒            ▒              ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒  ╔═════════╩═╗            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒▒▒╣∙∙∙∙∙∙∙∙∙!∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙∙║
-║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙!∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
-╚═══════╦══════════╝     ╚═════════╦═╝            ╚══════════════════╝
-        ▒                   ▒▒▒▒▒▒▒▒                                  
-        ▒▒▒▒▒▒▒▒▒▒▒       ╔═╩═╗                                       
-    ╔══════════╩═╗    ▒╣∙∙∙║                          ╔════╗       
-    ║∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒║∙∙∙║                          ║∙∙∙∙║       
-    ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙!∙∙║       
-    ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙║       
-    ║∙∙∙∙∙!∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
-    ╚════════════╝     ╚═══╝                          ╚════╝       
+## [ constants ]
+
+Map = """       ╔══════════╗                                                   
+        ║∙∙∙∙∙∙∙∙∙∙║                               ╔══════════════════╗
+        ║∙∙∙∙∙∙∙∙∙∙║                               ║∙∙∙∙∙∙∙∙!∙∙∙∙∙∙∙∙∙║
+        ╚══════╦═══╝                            ▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙║
+                ▒                         ▒▒▒▒▒▒▒▒  ╚╦═════════════════╝
+                ▒                         ▒          ▒                  
+            ▒▒▒▒▒▒▒                    ▒▒▒▒▒▒          ▒▒▒▒▒▒             
+    ╔═══════╩══════════╗               ▒              ╔═════╩════════════╗
+    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒            ▒              ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒  ╔═════════╩═╗            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║  ▒▒▒╣∙∙∙∙∙∙∙∙∙!∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙∙∙∙∙∙∙∙∙!∙∙∙∙∙║
+    ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙∙!∙∙∙∙∙∙║            ║∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙║
+    ╚═══════╦══════════╝     ╚═════════╦═╝            ╚══════════════════╝
+            ▒                   ▒▒▒▒▒▒▒▒                                  
+            ▒▒▒▒▒▒▒▒▒▒▒       ╔═╩═╗                                       
+        ╔══════════╩═╗    ▒╣∙∙∙║                          ╔════╗       
+        ║∙∙∙∙∙∙∙∙∙∙∙∙╠▒▒▒▒▒║∙∙∙║                          ║∙∙∙∙║       
+        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║                          ║∙!∙∙║       
+        ║∙∙∙∙∙∙∙∙∙∙∙∙║     ║∙∙∙║  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒╣∙∙∙∙║       
+        ║∙∙∙∙∙!∙∙∙∙∙∙║     ║∙∙∙╠▒▒▒                       ║∙∙∙∙║       
+        ╚════════════╝     ╚═══╝                          ╚════╝       
 """
+black = (0, 0, 0)
+blue = (0, 255, 0)
+grey = (169,169,169)
+wall_color = (170, 85, 0)
+movable_space_color = (80, 240, 80)
+exclamation_color = (251, 251, 84)
+passage_color = (167, 167, 167)
+player_color = (0, 0, 255)
 
+
+
+
+def run_game(screen):
+
+    pygame.init()
+    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    pygame.display.set_caption("Rogue Bomber")
+
+    
 
     def move(d):
         global Player_pos
@@ -61,6 +79,7 @@ def run_game(screen, asset, map_instance):
                 drawplayer(calcmappos)
 
     def checkvalid(mappos):
+        global Map
         if Map[mappos] in ['║','═','╗','╝','╚','╔', " "]:
             return False
         return True
@@ -69,10 +88,11 @@ def run_game(screen, asset, map_instance):
         return pos[0]*71 + pos[1] + 1
 
     def drawplayer(mappos):
-        global playermap
+        global playermap, Map
         playermap = Map[:mappos]+"@"+Map[mappos+1:]
 
     def draw_map():
+        global black, lines, wall_color, movable_space_color, exclamation_color, passage_color, player_color, screen
         screen.fill(black)
         for i, line in enumerate(lines):
             for j, char in enumerate(line):
@@ -91,20 +111,11 @@ def run_game(screen, asset, map_instance):
                 text_surface = font.render(char, True, color)
                 screen.blit(text_surface, (j * 19, i * 30))
 
-
-
-
-    black = (0, 0, 0)
-    blue = (0, 255, 0)
-    grey = (169,169,169)
-    wall_color = (170, 85, 0)
-    movable_space_color = (80, 240, 80)
-    exclamation_color = (251, 251, 84)
-    passage_color = (167, 167, 167)
-    player_color = (0, 0, 255)
-
-
     
+
+
+    Player_pos = [10, 9]
+    Map_pos = 720
     # curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
     font = pygame.font.SysFont("Courier New", 32) # use monospace font always, otherwise the text alignment will be off
     playermap = ""
@@ -181,6 +192,12 @@ def run_game(screen, asset, map_instance):
                         screen.fill(black)
                         screen.blit(menu, (menu_x, menu_y))
                         
+                        
+                        
+
+
+        
+        # displaying each line in a text surface for efficient manipulation 
         if menu_active == False:
             draw_map()
         pygame.display.flip()

@@ -6,7 +6,7 @@ def load_user_data(username):
         conn = mysql.connector.connect(
             host='localhost',
             user='root',
-            password="asdfghjkl;'",
+            password="qweasd",
             database='rogue'
         )
         
@@ -45,7 +45,7 @@ def load_user_data(username):
         print("Error connecting to MySQL:", e)
         return None
 
-# Example usage:
-username = input("Enter your username: ")
-user_data = load_user_data(username)
+# # Example usage:
+# username = input("Enter your username: ")
+# user_data = load_user_data(username)
 

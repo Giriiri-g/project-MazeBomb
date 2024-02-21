@@ -1,81 +1,60 @@
-import pygame
-import sys
-import os
-from moviepy.editor import VideoFileClip
+import tkinter as tk
+from PIL import Image, ImageTk
+import database
+import tkinter.font as font
 
-pygame.init()
+def display_login(asset):
 
-width, height = 1200, 750
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Login!")
-
-# Load the video file
-video_file = "Rogue Bomber\\Assets\\videoplayback.mp4"
-video_path = os.path.join("Rogue Bomber\\Assets\\videoplayback.mp4")
-
-# Load the video clip
-video_clip = VideoFileClip(video_path)
-
-clock = pygame.time.Clock()
-
-word_to_display = "Login:"
-
-def drop_text_animation(word, font, text_color, background_color, screen):
-    text_surface = font.render(word, True, text_color)
-    text_width, text_height = text_surface.get_size()
-    x = (width - text_width) // 2
-    y = height // 8  # Set the desired height
-    screen.fill(background_color)  # Fill screen with background color
-    screen.blit(text_surface, (x, y))
-    pygame.display.flip()
-
-def animated_text_display(word):
-    font = pygame.font.Font(None, 64)
-    text_color = (255, 255, 255)
-    background_color = (0, 0, 0)
-    drop_text_animation(word, font, text_color, background_color, screen)
-
-def main():
-    animated_text_display(word_to_display)
+    def validate_length(P):
+        if len(P) > 10:
+            return False
+        return True
     
-    # Create a text input box for username
-    input_box = pygame.Rect(width // 2 - 200, height - 150, 400, 50)
-    user_text = ''
-    font = pygame.font.Font(None, 36)
+    def on_enter_pressed(event, entry):
+        name = entry.get()
+        print(f"User Name: {name}")
+        # database.load_user_data(name)
+        root.destroy()
+        return "game"
 
-    # Play the video loop
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    print("Username entered:", user_text)
-                    # Add code here to handle the username input
+    root = tk.Tk()
+    root.title("Login Page")
+    root.configure(background='black')
+    root.geometry("1000x800+250+19")  # height x width + x_offset + y_offset
 
-                elif event.key == pygame.K_BACKSPACE:
-                    user_text = user_text[:-1]
-                else:
-                    user_text += event.unicode
+    # Load and resize background image
+    image = Image.open(asset.homepage_bg)  # Change "background_image.jpg" to your image file
+    image = image.resize((root.winfo_screenwidth(), root.winfo_screenheight()), Image.ANTIALIAS)
+    background_image = ImageTk.PhotoImage(image)
 
-        # Capture a frame from the video
-        frame = video_clip.get_frame(pygame.time.get_ticks() / 1000 % video_clip.duration)
-        # Convert the frame to Pygame surface
-        frame_surface = pygame.surfarray.make_surface(frame)
-        # Scale the frame surface to fit the screen
-        scaled_frame_surface = pygame.transform.scale(frame_surface, (width, height))
-        # Blit the scaled frame onto the screen
-        screen.blit(scaled_frame_surface, (0, 0))
+    # Create background label
+    background_label = tk.Label(root, font=("Courier", 18), bg="black", fg="white", bd=2, relief="solid", image=background_image)
+    background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Draw the text input box
-        pygame.draw.rect(screen, (255, 255, 255), input_box, 2)  # Border for the input box
-        pygame.draw.rect(screen, (200, 200, 200), input_box)     # Background color for the input box
-        font_surface = font.render(user_text, True, (0, 0, 0))
-        screen.blit(font_surface, (input_box.x + 10, input_box.y + 10))  # Adjust text position inside input box
+    # Load the font file
+    title_font = font.Font(family="AcPlus_IBM_BIOS", size=60)
+    try:
+        title_font = font.Font(family="AcPlus_IBM_BIOS", size=60)
+    except tk.TclError:
+        title_font = font.create_font("AcPlus_IBM_BIOS", 60, "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal", "mono", "normal")
 
-        pygame.display.flip()
-        clock.tick(30)  # Adjust the frame rate as needed
+    title = "ROGUE BOMBER"
+    title_label = tk.Label(root, text=title, font=title_font, bg="black", fg="white", bd=2, relief="solid")
+    title_label.place(relx=0.5, rely=0.1, anchor="center")
 
-if __name__ == "__main__":
-    main()
+    # Create entry widget
+    frame = tk.Frame(root, bg="black", bd=2, highlightcolor="#CCCCCC", highlightthickness=2, relief="solid")
+    frame.place(relx=0.5, rely=0.95, anchor="center")
+
+    # Create label and entry widget inside frame
+    label = tk.Label(frame, text="Rogue's Name?", font=("Arial", 28), bg="black", fg="white")
+    label.pack(side="left")
+    entry = tk.Entry(frame, bg="black", fg="white", font=("Arial", 28), width=10, validate="key", validatecommand=(root.register(validate_length), "%P"))
+    entry.pack(padx=5, side="right", fill="x", expand=True)
+    entry.focus()
+
+    # Bind Enter key to entry widget
+    entry.bind("<Return>", lambda event: on_enter_pressed(event, entry))
+    root.mainloop()
+
+    return "game"
