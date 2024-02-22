@@ -3,7 +3,7 @@ import threading
 from tkinter import *
 
 # Server configuration
-SERVER_IP = "192.168.76.221"
+SERVER_IP = "172.20.10.7"
 SERVER_PORT = 16000
 
 # Function to handle receiving messages from the server
