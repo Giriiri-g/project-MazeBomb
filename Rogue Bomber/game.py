@@ -4,7 +4,7 @@ import pygame
 import sys
 
 def run_game(screen):
-    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, game_over_surf, isGameOver
+    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, isGameOver
     
 
     pygame.init()
@@ -25,10 +25,9 @@ def run_game(screen):
     font = pygame.font.SysFont("Courier New", 28)
     font2 = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 18)
     hud_surface = pygame.Surface((1200, 60))
-    game_over_surf = pygame.Surface((1200, 800))
     hud_surface.fill((169, 169, 169))
-    hud_names = ["Giriirig", "PsylectrA", "", "Satoru"]
-    hud_values = [["♥♥♥♥♥", 0, 1], ["♥", 0, 2], ["", 0, 0], ["", 0, 1]]
+    hud_names = ["Giriirig", "PsylectrA", "Sukuna", "Satoru"]
+    hud_values = [["♥♥♥♥♥", 0, 1], ["♥♥♥♥♥", 0, 2], ["♥♥♥♥♥", 0, 0], ["♥♥♥♥♥", 0, 1]]
     surface_width = 298
     surface_height = 58
     player_huds = [pygame.Surface((surface_width, surface_height)) for _ in range(4)]
@@ -174,14 +173,12 @@ def run_game(screen):
         
 
     def draw_gameover(winner_name):
-        global screen, game_over_surf
-        game_over_surf.fill(black)
+        global screen
         font = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 30)
         text = font.render('Game Over!', True, white)
         winner_text = font.render(f'{winner_name} won!', True, white)
-        game_over_surf.blit(text, (480, 300))
-        game_over_surf.blit(winner_text, (495, 350))
-        screen.blit(game_over_surf, (0, 0))
+        screen.blit(text, (480, 300))
+        screen.blit(winner_text, (495, 350))
         pygame.display.flip()
         
 
@@ -246,7 +243,7 @@ def run_game(screen):
                     if event.key == pygame.K_d and menu_active == False:
                         move("d", player)
                     if event.key == pygame.K_b and menu_active == False:
-                        if hud_values[0][1]>0:
+                        if hud_values[player][1]>0:
                             place_bomb(player)
                             
                     if (event.key == pygame.K_ESCAPE):
