@@ -4,7 +4,7 @@ import pygame
 import sys
 
 def run_game(screen):
-    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, game_over_surf, isGameOver
+    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, game_over, game_over_surf, isGameOver
     
 
     pygame.init()
@@ -12,6 +12,7 @@ def run_game(screen):
     
 
     isGameOver = False
+    game_over = False
     players = [[10,9], [11,30], [10, 58], [18, 27]]
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -28,7 +29,7 @@ def run_game(screen):
     game_over_surf = pygame.Surface((1200, 800))
     hud_surface.fill((169, 169, 169))
     hud_names = ["Giriirig", "PsylectrA", "Puchandi", "cumlord"]
-    hud_values = [["♥♥♥♥♥", 0, 1], ["♥", 0, 2], ["", 0, 0], ["", 0, 1]]
+    hud_values = [["♥♥♥♥♥", 0, 1], ["♥", 0, 2], ["♥", 0, 0], ["", 0, 1]]
     surface_width = 298
     surface_height = 58
     player_huds = [pygame.Surface((surface_width, surface_height)) for _ in range(4)]
@@ -161,7 +162,7 @@ def run_game(screen):
         global players, hud_names
         alive_count = 0
         last_alive_player_index = -1
-        for ind, player in enumerate(hud_values):
+        for ind, player in enumerate(players):
             if player[0]:
                 alive_count += 1
                 last_alive_player_index = ind
@@ -179,8 +180,8 @@ def run_game(screen):
         font = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 30)
         text = font.render('Game Over!', True, white)
         winner_text = font.render(f'{winner_name} won!', True, white)
-        game_over_surf.blit(text, (480, 300))
-        game_over_surf.blit(winner_text, (495, 350))
+        game_over_surf.blit(text, (600, 200))
+        game_over_surf.blit(winner_text, (600, 250))
         screen.blit(game_over_surf, (0, 0))
         pygame.display.flip()
         
@@ -214,17 +215,6 @@ def run_game(screen):
         if isGameOver:
             winner = checkgameover()
             draw_gameover(winner)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                    
-
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        print("Shutting Down")
-                        pygame.quit()
-                        sys.exit()
         else:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -263,9 +253,11 @@ def run_game(screen):
                 i[1] -= 1
                 if i[1] == 0:
                     explode(ind)
-                    if checkgameover() is not None:
-                        isGameOver = True
                     
+
+            if checkgameover() is not None:
+                isGameOver = True
+                
 
             if Map.count('!') <= 8 and random.random() < 0.005:
                 movable_indices = [i for i, char in enumerate(Map) if char == '∙']
@@ -278,8 +270,8 @@ def run_game(screen):
                 drawplayer()
                 draw_map()
                 draw_hud()
-        pygame.display.flip()
-        clock.tick(60)
+            pygame.display.flip()
+            clock.tick(60)
 
 
 import assets
