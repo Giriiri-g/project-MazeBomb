@@ -91,6 +91,6 @@ def insert_user_data(username, ip_address):
         print("Error inserting user data:", e)
 
 # Example usage:
-username = input("Enter your username: ")
-ip_address = get_user_ip()
-insert_user_data(username, ip_address)
+# username = input("Enter your username: ")
+# ip_address = get_user_ip()
+# insert_user_data(username, ip_address)

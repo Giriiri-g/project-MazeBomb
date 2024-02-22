@@ -4,9 +4,10 @@ import pygame
 import sys
 
 def run_game(screen):
-    global Map, Player_pos, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map
+    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, dead_count, game_over
 
-
+    dead_count = 0
+    game_over = False
     players = [[10,9], [11,30], [10, 58], [18, 27]]
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -22,7 +23,7 @@ def run_game(screen):
     hud_surface = pygame.Surface((1200, 60))
     hud_surface.fill((169, 169, 169))
     hud_names = ["Giriirig", "PsylectrA", "Puchandi", "cumlord"]
-    hud_values = [["♥♥♥♥♥", 0, 1], ["♥♥♥", 0, 2], ["", 3, 0], ["♥♥♥♥", 2, 1]]
+    hud_values = [["♥♥♥♥♥", 0, 1], ["♥♥♥♥♥", 0, 2], ["♥♥♥♥♥", 3, 0], ["♥♥♥♥♥", 2, 1]]
     surface_width = 298
     surface_height = 58
     player_huds = [pygame.Surface((surface_width, surface_height)) for _ in range(4)]
@@ -141,14 +142,16 @@ def run_game(screen):
                 screen.blit(text_surface, offset)
 
     def draw_hud():
-        global players
+        global players, dead_count
         hud_surface.fill(grey)
         x_positions = [1, 301, 601, 901]
         y_position = 1
         screen.blit(hud_surface, (0, 0))
+        dead_count = 0
         for i, (name, values) in enumerate(zip(hud_names, hud_values)):
             if len(values[0]) == 0:
                 players[i] = [2, 27]
+                dead_count+=1
                 font_color = red
             else:
                 font_color = white
@@ -185,9 +188,26 @@ def run_game(screen):
         draw_map()
         draw_hud()
 
-    # Player_pos = [10, 9]
+    def checkgameover():
+        global players, dead_count
+        if dead_count == 3:
+             print(dead_count)
+             for player, i in enumerate(players):
+                  if not i[0]:
+                       return player
+        return None
+    
+    def draw_gameover():
+         global screen
+         game_over_surf = pygame.Surface((1200, 800))
+         game_over_surf.fill(black)
+         font = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 30)
+         text = font.render('Game Over!', True, white)
+         game_over_surf.blit(text, (600, 200))
+
+
+
     player = 0
-    # Map_pos = 720
     # curr Map pos = pos[0]*71 + pos[1] + 1, pos -> player pos
     playermap = ""
     drawplayer()
@@ -226,7 +246,7 @@ def run_game(screen):
     # Main Loop
 
     clock = pygame.time.Clock()
-    fps = 60
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -234,26 +254,26 @@ def run_game(screen):
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q and menu_active == True:
+                if event.key == pygame.K_q and (menu_active == True or game_over):
                         print("Shutting Down")
                         pygame.quit()
                         sys.exit()
-                if event.key == pygame.K_a and menu_active == False:
+                if (not game_over) and (event.key == pygame.K_a and menu_active == False):
                         move("a", player)
-                if event.key == pygame.K_s and menu_active == False:
+                if (not game_over) and (event.key == pygame.K_s and menu_active == False):
                         move("s", player)
-                if event.key == pygame.K_w and menu_active == False:
+                if (not game_over) and (event.key == pygame.K_w and menu_active == False):
                         move("w", player)
-                if event.key == pygame.K_d and menu_active == False:
+                if (not game_over) and (event.key == pygame.K_d and menu_active == False):
                         move("d", player)
-                if event.key == pygame.K_b and menu_active == False:
+                if (not game_over) and (event.key == pygame.K_b and menu_active == False):
                         if hud_values[0][1]>0:
                             place_bomb(player)
 
                 if (event.key == pygame.K_ESCAPE):
                         menu_active = False
 
-                if (event.key == pygame.K_SLASH):
+                if (not game_over) and (event.key == pygame.K_SLASH):
                         
                         menu_active = True
                         screen.fill(black)
@@ -266,6 +286,13 @@ def run_game(screen):
              if i[1] == 0:
                   explode(ind)
                         
+        if (not game_over) and (checkgameover() is not None):
+             print(checkgameover())
+             print(dead_count)
+             draw_gameover()
+             game_over = True
+
+
         if Map.count('!') <= 8 and random.random() < 0.005:
             movable_indices = [i for i, char in enumerate(Map) if char == '∙']
             if movable_indices:
@@ -274,9 +301,8 @@ def run_game(screen):
 
         
 
-        if menu_active == False:
+        if (not game_over) and (menu_active == False):
             drawplayer()
-
             draw_map()
             draw_hud()
         pygame.display.flip()
