@@ -27,7 +27,7 @@ def run_game(screen):
     hud_surface = pygame.Surface((1200, 60))
     game_over_surf = pygame.Surface((1200, 800))
     hud_surface.fill((169, 169, 169))
-    hud_names = ["Giriirig", "PsylectrA", "Puchandi", "cumlord"]
+    hud_names = ["Giriirig", "PsylectrA", "", "Satoru"]
     hud_values = [["♥♥♥♥♥", 0, 1], ["♥", 0, 2], ["", 0, 0], ["", 0, 1]]
     surface_width = 298
     surface_height = 58
