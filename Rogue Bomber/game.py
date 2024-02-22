@@ -2,11 +2,13 @@
 import  random
 import pygame
 import sys
+from multiprocessing import Process, Queue
+import server
+import threading
 
-def run_game(screen):
-    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, isGameOver
+def run_game(screen, users=None):
+    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, isGameOver, hud_users
     
-
     pygame.init()
     pygame.display.set_caption("Rogue Bomber")
     
@@ -26,8 +28,11 @@ def run_game(screen):
     font2 = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 18)
     hud_surface = pygame.Surface((1200, 60))
     hud_surface.fill((169, 169, 169))
-    hud_names = ["Giriirig", "PsylectrA", "Sukuna", "Satoru"]
-    hud_values = [["♥♥♥♥♥", 0, 1], ["♥♥♥♥♥", 0, 2], ["♥♥♥♥♥", 0, 0], ["♥♥♥♥♥", 0, 1]]
+    hud_names = ["Giriirig", "PsylectrA", "Sukuna", "Puchandi"]
+    if users is not None:
+        hud_names = users
+    hud_users = ["@", "#", "$", "&"]
+    hud_values = [["♥♥♥♥♥", 0, 0], ["♥♥♥♥♥", 0, 0], ["♥♥♥♥♥", 0, 0], ["♥♥♥♥♥", 0, 0]]
     surface_width = 298
     surface_height = 58
     player_huds = [pygame.Surface((surface_width, surface_height)) for _ in range(4)]
@@ -108,7 +113,7 @@ def run_game(screen):
                 
 
     def draw_hud():
-        global players, dead_count
+        global players, dead_count, hud_users
         hud_surface.fill(grey)
         x_positions = [1, 301, 601, 901]
         y_position = 1
@@ -124,18 +129,20 @@ def run_game(screen):
             player_huds[i].fill((0, 0, 0))
             name_text = font2.render(name, True, font_color)
             player_huds[i].blit(name_text, (10, 5))
+            char = font2.render(hud_users[i], True, (0, 0, 255))
+            player_huds[i].blit(char, (145, 30))
             hearts_text = font2.render(values[0], True, font_color)
-            player_huds[i].blit(hearts_text, (200, 6))
+            player_huds[i].blit(hearts_text, (217, 6))
             val1_text = font2.render("☼x"+str(values[1]), True, font_color)
             player_huds[i].blit(val1_text, (10, 30))
             val2_text = font2.render("ɸx"+str(values[2]), True, font_color)
-            player_huds[i].blit(val2_text, (val1_text.get_width() + 200, 30))
+            player_huds[i].blit(val2_text, (245, 30))
             screen.blit(player_huds[i], (x_positions[i], y_position))
             
 
     def place_bomb(player):
         global Map, bombs, players, playermap
-        bombs.append([players[player], 120])
+        bombs.append([players[player], 60, player])
         Map = Map[:mapindexer(players[player])] + '☼' + Map[mapindexer(players[player])+1:]
         drawplayer()
         hud_values[player][1] -= 1
@@ -147,10 +154,12 @@ def run_game(screen):
         Map = Map[:mapindexer(bomb[0])] + og_Map[mapindexer(bomb[0])] + Map[mapindexer(bomb[0])+1:]
         bombs.pop(index)
         x,y = bomb[0][0], bomb[0][1]
-        radius = [[x-1,y-1],[x,y-1],[x+1,y-1],[x-1,y],[x,y],[x+1,y],[x-1,y+1],[x,y+1],[x+1,y+1]]
+        radius = [[x-1,y-1],[x,y-1],[x+1,y-1],[x-1,y],[x,y],[x+1,y],[x-1,y+1],[x,y+1],[x+1,y+1],[x-2,y+2],[x-1,y+2],[x,y+2],[x+1,y+2],[x+2,y+2],[x-2,y+1],[x+2,y+1],[x-2,y],[x+2,y],[x-2,y-1],[x+2,y-1],[x-2,y-2],[x-1,y-2],[x,y-2],[x+1,y-2],[x+2,y-2]]
         for ind, player in enumerate(players):
             if player in radius:
-                hud_values[ind][0] = hud_values[ind][0][:-1]
+                hud_values[ind][0] = hud_values[ind][0][1:]
+                if hud_values[ind][0] == "":
+                    hud_values[bomb[2]][2] +=1
         drawplayer()
         draw_map()
         draw_hud()
@@ -173,7 +182,6 @@ def run_game(screen):
         
 
     def draw_gameover(winner_name):
-        global screen
         font = pygame.font.Font("Rogue Bomber/Assets/fonts/ttf - Ac (aspect-corrected)/AcPlus_IBM_BIOS.ttf", 30)
         text = font.render('Game Over!', True, white)
         winner_text = font.render(f'{winner_name} won!', True, white)
@@ -235,17 +243,49 @@ def run_game(screen):
                         pygame.quit()
                         sys.exit()
                     if event.key == pygame.K_a and menu_active == False:
-                        move("a", player)
+                        move("a", 0)
                     if event.key == pygame.K_s and menu_active == False:
-                        move("s", player)
+                        move("s", 0)
                     if event.key == pygame.K_w and menu_active == False:
-                        move("w", player)
+                        move("w", 0)
                     if event.key == pygame.K_d and menu_active == False:
-                        move("d", player)
-                    if event.key == pygame.K_b and menu_active == False:
-                        if hud_values[player][1]>0:
-                            place_bomb(player)
-                            
+                        move("d", 0)
+                    if event.key == pygame.K_e and menu_active == False:
+                        if hud_values[0][1]>0:
+                            place_bomb(0)
+                    if event.key == pygame.K_h and menu_active == False:
+                        move("a", 1)
+                    if event.key == pygame.K_j and menu_active == False:
+                        move("s", 1)
+                    if event.key == pygame.K_u and menu_active == False:
+                        move("w", 1)
+                    if event.key == pygame.K_k and menu_active == False:
+                        move("d", 1)
+                    if event.key == pygame.K_i and menu_active == False:
+                        if hud_values[1][1]>0:
+                            place_bomb(1)
+                    if event.key == pygame.K_LEFT and menu_active == False:
+                        move("a", 2)
+                    if event.key == pygame.K_DOWN and menu_active == False:
+                        move("s", 2)
+                    if event.key == pygame.K_UP and menu_active == False:
+                        move("w", 2)
+                    if event.key == pygame.K_RIGHT and menu_active == False:
+                        move("d", 2)
+                    if event.key == pygame.K_RSHIFT and menu_active == False:
+                        if hud_values[2][1]>0:
+                            place_bomb(2)
+                    if event.key == pygame.K_KP4 and menu_active == False:
+                        move("a", 3)
+                    if event.key == pygame.K_KP5 and menu_active == False:
+                        move("s", 3)
+                    if event.key == pygame.K_KP8 and menu_active == False:
+                        move("w", 3)
+                    if event.key == pygame.K_KP6 and menu_active == False:
+                        move("d", 3)
+                    if event.key == pygame.K_KP9 and menu_active == False:
+                        if hud_values[3][1]>0:
+                            place_bomb(3)
                     if (event.key == pygame.K_ESCAPE):
                         menu_active = False
                         
@@ -253,7 +293,7 @@ def run_game(screen):
                         menu_active = True
                         screen.fill(black)
                         screen.blit(menu, (menu_x, menu_y))
-                        
+
 						
 
             for ind, i in enumerate(bombs):
@@ -264,7 +304,7 @@ def run_game(screen):
                         isGameOver = True
                     
 
-            if Map.count('!') <= 8 and random.random() < 0.005:
+            if Map.count('!') <= 8 and random.random() < 0.007:
                 movable_indices = [i for i, char in enumerate(Map) if char == '∙']
                 if movable_indices:
                     random_index = random.choice(movable_indices)
@@ -279,9 +319,10 @@ def run_game(screen):
         clock.tick(60)
 
 
-import assets
-pygame.init()
-asset = assets.Asset()
-screen = pygame.display.set_mode((asset.width, asset.height))
-pygame.display.set_caption("Rogue Bomber")
-run_game(screen)
+
+# import assets
+# pygame.init()
+# asset = assets.Asset()
+# screen = pygame.display.set_mode((asset.width, asset.height))
+# pygame.display.set_caption("Rogue Bomber")
+# run_game(screen)
