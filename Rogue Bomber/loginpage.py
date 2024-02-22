@@ -4,18 +4,23 @@ import database
 import tkinter.font as font
 
 def display_login(asset):
-
+    global usernames
+    usernames = []
     def validate_length(P):
         if len(P) > 10:
             return False
         return True
     
     def on_enter_pressed(event, entry):
+        global usernames
         name = entry.get()
+        entry.delete(0, 'end')
         print(f"User Name: {name}")
         database.load_user_data(name)
-        root.destroy()
-        return "game"
+        usernames.append(name)
+        if len(usernames) == 4:
+            root.destroy()
+            return
 
     root = tk.Tk()
     root.title("Login Page")
@@ -57,4 +62,4 @@ def display_login(asset):
     entry.bind("<Return>", lambda event: on_enter_pressed(event, entry))
     root.mainloop()
 
-    return "game"
+    return "game", usernames
