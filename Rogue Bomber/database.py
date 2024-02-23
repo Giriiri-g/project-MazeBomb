@@ -58,7 +58,24 @@ def insert_user_data(username, ip_address):
     
     except mysql.connector.Error as e:
         print("Error inserting user data:", e)
+        
 
+
+def writeResults(hud_names, hud_values):
+	conn = mysql.connector.connect(
+			host='localhost',
+			user='root',
+			password="qweasd",
+			database='rogue'
+		)
+	cursor = conn.cursor()
+	cursor.execute("DELETE FROM game_stats")
+	for i in range(4):
+		cursor.execute("INSERT INTO game_stats VALUES(%s, %s, %s, %s)", (hud_names[i], len(hud_values[i][0]), hud_values[i][1], hud_values[i][2]))
+	conn.commit()
+	cursor.close()
+	conn.close()
+        
 # Example usage:
 # username = input("Enter your username: ")
 # ip_address = get_user_ip()

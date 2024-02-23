@@ -7,13 +7,14 @@ import server
 import threading
 
 def run_game(screen, users=None):
-    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, hud_colors, bombs, players, og_Map, isGameOver, hud_users
+    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, hud_colors, bombs, players, og_Map, isGameOver, hud_users, hud_colors
     
     pygame.init()
     pygame.display.set_caption("Rogue Bomber")
     
 
     isGameOver = False
+    hud_colors = [(240,31,255),(212,168,255),(0,238,255),(0,17,255)]
     players = [[10,9], [11,30], [10, 58], [18, 27]]
     white = (255, 255, 255)
     black = (0, 0, 0)
@@ -29,7 +30,6 @@ def run_game(screen, users=None):
     hud_surface = pygame.Surface((1200, 60))
     hud_surface.fill((169, 169, 169))
     hud_names = ["Giriirig", "PsylectrA", "Sukuna", "Puchandi"]
-    hud_colors = [(),(),(),()]
     if users is not None:
         hud_names = users
     hud_users = ["@", "#", "$", "&"]
@@ -216,9 +216,15 @@ def run_game(screen, users=None):
     
 
 
+
+    resultsWritten = False
     clock = pygame.time.Clock()
     while True:
         if isGameOver:
+            if not resultsWritten:
+                import database
+                database.writeResults(hud_names, hud_values)
+                resultsWritten = True
             winner = checkgameover()
             draw_gameover(winner)
             for event in pygame.event.get():
