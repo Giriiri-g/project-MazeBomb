@@ -7,7 +7,7 @@ import server
 import threading
 
 def run_game(screen, users=None):
-    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, bombs, players, og_Map, isGameOver, hud_users
+    global Map, playermap, lines, menu_active, hud_surface, hud_names, hud_values, font2, player_huds, font, hud_colors, bombs, players, og_Map, isGameOver, hud_users
     
     pygame.init()
     pygame.display.set_caption("Rogue Bomber")
@@ -29,6 +29,7 @@ def run_game(screen, users=None):
     hud_surface = pygame.Surface((1200, 60))
     hud_surface.fill((169, 169, 169))
     hud_names = ["Giriirig", "PsylectrA", "Sukuna", "Puchandi"]
+    hud_colors = [(),(),(),()]
     if users is not None:
         hud_names = users
     hud_users = ["@", "#", "$", "&"]
@@ -105,7 +106,8 @@ def run_game(screen, users=None):
                 elif char == "▒":
                     color = passage_color
                 elif char in ["@", "#", "$", "&"]:
-                    color = player_color
+                    color = hud_colors[hud_users.index(char)]
+                
                     
                 text_surface = font.render(char, True, color)
                 offset = (j * 15 + 75, i * 28 + 120)

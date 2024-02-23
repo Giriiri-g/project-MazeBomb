@@ -4,7 +4,7 @@ import pygame
 player_id = 1
 
 def send_key_to_server(key):
-    SERVER_IP = '192.168.239.221'
+    SERVER_IP = '192.168.25.221'
     SERVER_PORT = 60000
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
