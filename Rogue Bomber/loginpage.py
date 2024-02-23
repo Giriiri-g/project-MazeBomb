@@ -16,7 +16,8 @@ def display_login(asset):
         name = entry.get()
         entry.delete(0, 'end')
         print(f"User Name: {name}")
-        database.load_user_data(name)
+        ip_address = database.get_user_ip()
+        database.insert_user_data(name, ip_address)
         usernames.append(name)
         if len(usernames) == 4:
             root.destroy()
