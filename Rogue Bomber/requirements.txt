@@ -1,0 +1,4 @@
+# install the following modules before running the game
+pygame
+pillow==9.5.0
+mysql-connector
